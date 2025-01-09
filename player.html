@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Player</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f4f4f9;
+        }
+        h1 {
+            color: #333;
+        }
+        video {
+            margin-top: 20px;
+            width: 80%;
+            max-width: 720px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Video Player</h1>
+    <p id="message">Loading video...</p>
+    <video id="videoPlayer" controls></video>
+
+    <script>
+        // Function to get query parameters from the URL
+        function getQueryParam(param) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(param);
+        }
+
+        // Extract the video URL from the "video" parameter
+        const videoUrl = getQueryParam('video');
+        const videoPlayer = document.getElementById('videoPlayer');
+        const message = document.getElementById('message');
+
+        if (videoUrl) {
+            videoPlayer.src = decodeURIComponent(videoUrl);
+            videoPlayer.style.display = 'block';
+            message.style.display = 'none';
+        } else {
+            message.textContent = 'No video URL provided in the query string.';
+        }
+    </script>
+</body>
+</html>
