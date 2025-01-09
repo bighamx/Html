@@ -40,7 +40,7 @@
         const message = document.getElementById('message');
 
         if (videoUrl) {
-            const cleanUrl = videoUrl.startsWith('video=') ? videoUrl.slice(6) : videoUrl;
+            const cleanUrl = videoUrl.startsWith('?video=') ? videoUrl.slice(7) : videoUrl;
             videoPlayer.src = decodeURIComponent(cleanUrl);
             videoPlayer.style.display = 'block';
             message.style.display = 'none';
