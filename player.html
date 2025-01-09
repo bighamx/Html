@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Video Player</title>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -19,7 +20,7 @@
             color: #333;
         }
         video {
-            margin:auto;
+            margin: auto;
             width: 100%;
             max-width: 1920px;
         }
@@ -41,9 +42,29 @@
 
         if (videoUrl) {
             const cleanUrl = videoUrl.startsWith('?video=') ? videoUrl.slice(7) : videoUrl;
-            videoPlayer.src = decodeURIComponent(cleanUrl);
-            videoPlayer.style.display = 'block';
-            message.style.display = 'none';
+            const decodedUrl = decodeURIComponent(cleanUrl);
+
+            if (decodedUrl.indexOf('.m3u8')>0) {
+                if (Hls.isSupported()) {
+                    const hls = new Hls();
+                    hls.loadSource(decodedUrl);
+                    hls.attachMedia(videoPlayer);
+                    hls.on(Hls.Events.MANIFEST_PARSED, function () {
+                        videoPlayer.play();
+                    });
+                } else if (videoPlayer.canPlayType('application/vnd.apple.mpegurl')) {
+                    videoPlayer.src = decodedUrl;
+                    videoPlayer.addEventListener('loadedmetadata', function () {
+                        videoPlayer.play();
+                    });
+                } else {
+                    message.textContent = 'Your browser does not support HLS playback.';
+                }
+            } else {
+                videoPlayer.src = decodedUrl;
+                videoPlayer.style.display = 'block';
+                message.style.display = 'none';
+            }
         } else {
             message.textContent = 'No video URL provided in the query string.';
         }
