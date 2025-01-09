@@ -42,7 +42,7 @@
 
         if (videoUrl) {
             const cleanUrl = videoUrl.startsWith('?video=') ? videoUrl.slice(7) : videoUrl;
-            const decodedUrl = decodeURIComponent(cleanUrl);
+            var decodedUrl = decodeURIComponent(cleanUrl);
 
              if (window.location.protocol === 'https:' && decodedUrl.startsWith('http:')) {
                 decodedUrl = decodedUrl.replace('http:', 'https:');
