@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket Chat</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f4f4f9;
+        }
+        #chatBox {
+            width: 80%;
+            max-width: 600px;
+            height: 300px;
+            border: 1px solid #ccc;
+            padding: 10px;
+            overflow-y: auto;
+            background: #fff;
+            margin-bottom: 10px;
+        }
+        input, button {
+            padding: 10px;
+            margin: 5px;
+        }
+        #messageInput {
+            flex: 1;
+            width: calc(100% - 120px);
+        }
+        #sendButton {
+            width: 100px;
+        }
+    </style>
+</head>
+<body>
+    <h1>WebSocket Chat</h1>
+    <div>
+        <input id="wsAddress" type="text" placeholder="Enter WebSocket address" style="width: 80%;">
+        <button id="connectButton">Connect</button>
+    </div>
+    <div id="chatBox">Disconnected</div>
+    <div style="display: flex; width: 80%; max-width: 600px;">
+        <input id="messageInput" type="text" placeholder="Type a message..." disabled>
+        <button id="sendButton" disabled>Send</button>
+    </div>
+
+    <script>
+        let ws;
+
+        document.getElementById('connectButton').addEventListener('click', () => {
+            const address = document.getElementById('wsAddress').value;
+            if (!address) {
+                alert('Please enter a WebSocket address');
+                return;
+            }
+
+            ws = new WebSocket(address);
+
+            ws.onopen = () => {
+                document.getElementById('chatBox').textContent = 'Connected';
+                document.getElementById('messageInput').disabled = false;
+                document.getElementById('sendButton').disabled = false;
+            };
+
+            ws.onmessage = (event) => {
+                const chatBox = document.getElementById('chatBox');
+                const message = document.createElement('div');
+                message.textContent = `Received: ${event.data}`;
+                chatBox.appendChild(message);
+                chatBox.scrollTop = chatBox.scrollHeight;
+            };
+
+            ws.onclose = () => {
+                document.getElementById('chatBox').textContent = 'Disconnected';
+                document.getElementById('messageInput').disabled = true;
+                document.getElementById('sendButton').disabled = true;
+            };
+
+            ws.onerror = (error) => {
+                console.error('WebSocket error:', error);
+                alert('WebSocket error occurred');
+            };
+        });
+
+        document.getElementById('sendButton').addEventListener('click', () => {
+            const input = document.getElementById('messageInput');
+            const message = input.value;
+            if (message && ws && ws.readyState === WebSocket.OPEN) {
+                ws.send(message);
+                const chatBox = document.getElementById('chatBox');
+                const sentMessage = document.createElement('div');
+                sentMessage.textContent = `Sent: ${message}`;
+                chatBox.appendChild(sentMessage);
+                chatBox.scrollTop = chatBox.scrollHeight;
+                input.value = '';
+            }
+        });
+    </script>
+</body>
+</html>
