@@ -26,24 +26,22 @@
     </style>
 </head>
 <body>
-    <h1>Video Player</h1>
     <p id="message">Loading video...</p>
     <video id="videoPlayer" controls></video>
 
     <script>
-        // Function to get query parameters from the URL
         function getQueryParam(param) {
             const urlParams = new URLSearchParams(window.location.search);
             return urlParams.get(param);
         }
 
-        // Extract the video URL from the "video" parameter
         const videoUrl = getQueryParam('video');
         const videoPlayer = document.getElementById('videoPlayer');
         const message = document.getElementById('message');
 
         if (videoUrl) {
-            videoPlayer.src = decodeURIComponent(videoUrl);
+            const cleanUrl = videoUrl.startsWith('video=') ? videoUrl.slice(6) : videoUrl;
+            videoPlayer.src = decodeURIComponent(cleanUrl);
             videoPlayer.style.display = 'block';
             message.style.display = 'none';
         } else {
